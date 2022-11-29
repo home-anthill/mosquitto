@@ -15,7 +15,13 @@ Take a look here [home-anthill/docs](https://github.com/home-anthill/docs)
 
 ## :fire: Releases :fire:
 
-- ??/??/2022 - 1.0.0-beta.1 - [HERE](https://github.com/home-anthill/gui/releases)
+DockerHub releases [HERE](https://hub.docker.com/repository/registry-1.docker.io/ks89/mosquitto/general)
+
+GitHub releases [HERE](https://github.com/home-anthill/mosquitto/releases)
+
+Versions:
+
+- ??/??/2022 - 1.0.0-beta.1
 
 
 ## :sparkling_heart: A big thank you to :sparkling_heart:
