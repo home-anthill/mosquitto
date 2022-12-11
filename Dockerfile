@@ -21,6 +21,8 @@ COPY certbotrenew.sh /etc/periodic/daily/certbotrenew
 RUN chmod +x /etc/periodic/daily/certbotrenew
 
 COPY mosquitto.conf /mosquitto/config/mosquitto.conf
-COPY mosquitto-no-security.conf /mosquitto/config/mosquitto-no-security.conf
+COPY mosquitto-nossl.conf /mosquitto/config/mosquitto-nossl.conf
+COPY mosquitto-auth.conf /mosquitto/config/mosquitto-auth.conf
+COPY mosquitto-nossl-auth.conf /mosquitto/config/mosquitto-nossl-auth.conf
 
 ENTRYPOINT ["sh", "run.sh"]
