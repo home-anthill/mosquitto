@@ -50,10 +50,10 @@ if [ ${CERTBOT_EMAIL+x} ] && [ ${CERTBOT_DOMAIN+x} ] && [ ${CERTBOT_SERVER+x} ];
     # set user and password for mosquitto
     mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     # start mosquitto with user/password authentication
-    mosquitto -c /mosquitto/config/mosquitto-auth.conf
+    # mosquitto -c /mosquitto/config/mosquitto-auth.conf
   else
     # start mosquitto without authentication
-    mosquitto -c /mosquitto/config/mosquitto.conf
+    # mosquitto -c /mosquitto/config/mosquitto.conf
   fi
 else
   ps -a
@@ -62,10 +62,10 @@ else
     # set user and password for mosquitto
     mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     # start mosquitto with user/password authentication
-    mosquitto -c /mosquitto/config/mosquitto-nossl-auth.conf
+    # mosquitto -c /mosquitto/config/mosquitto-nossl-auth.conf
   else
     # start mosquitto without authentication
-    mosquitto -c /mosquitto/config/mosquitto-nossl.conf
+    # mosquitto -c /mosquitto/config/mosquitto-nossl.conf
   fi
 fi
 
