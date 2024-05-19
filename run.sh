@@ -49,13 +49,13 @@ if [ ${CERTBOT_EMAIL+x} ] && [ ${CERTBOT_DOMAIN+x} ] && [ ${CERTBOT_SERVER+x} ];
   if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
     # set user and password for mosquitto
     mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    chown mosquitto:mosquitto /etc/mosquitto/password_file
+    chmod 0600 /etc/mosquitto/password_file
     # start mosquitto with user/password authentication
-    # mosquitto -c /mosquitto/config/mosquitto-auth.conf
-    echo "1a"
+    mosquitto -c /mosquitto/config/mosquitto-auth.conf
   else
     # start mosquitto without authentication
-    echo "1b"
-    # mosquitto -c /mosquitto/config/mosquitto.conf
+    mosquitto -c /mosquitto/config/mosquitto.conf
   fi
 else
   ps -a
@@ -63,13 +63,13 @@ else
   if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
     # set user and password for mosquitto
     mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    chown mosquitto:mosquitto /etc/mosquitto/password_file
+    chmod 0600 /etc/mosquitto/password_file
     # start mosquitto with user/password authentication
-    # mosquitto -c /mosquitto/config/mosquitto-nossl-auth.conf
-    echo "2a"
+    mosquitto -c /mosquitto/config/mosquitto-nossl-auth.conf
   else
     # start mosquitto without authentication
-    echo "2b"
-    # mosquitto -c /mosquitto/config/mosquitto-nossl.conf
+    mosquitto -c /mosquitto/config/mosquitto-nossl.conf
   fi
 fi
 
