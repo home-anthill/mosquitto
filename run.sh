@@ -6,7 +6,7 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   mkdir -p ${CERT_DIR}
 
   cp "/tls/tls.crt" ${CERT_DIR}/cert.pem
-  cp "/tls/ca.crt" ${CERT_DIR}/chain.pem
+  cp "/tls/tls.crt" ${CERT_DIR}/chain.pem
   cp "/tls/tls.key" ${CERT_DIR}/privkey.pem
 
   # Set ownership to Mosquitto
