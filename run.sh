@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+# set -e
 
 if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   echo "SSL enabled"
@@ -26,6 +26,7 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
     echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    ls -la ./
     mv ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
@@ -46,6 +47,7 @@ else
     echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    ls -la ./
     mv ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
