@@ -25,7 +25,8 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
     echo "mosquitto username ${MOSQUITTO_USERNAME}"
     echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
-    mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    mv ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
     # start mosquitto with user/password authentication
@@ -44,7 +45,8 @@ else
     echo "mosquitto username ${MOSQUITTO_USERNAME}"
     echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
-    mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+    mv ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
     # start mosquitto with user/password authentication
