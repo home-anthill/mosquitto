@@ -11,6 +11,10 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   echo "Copying SSL certs"
   cp "/tls/tls.crt" ${CERT_DIR}/cert.pem
   cp "/tls/tls.key" ${CERT_DIR}/privkey.pem
+
+  # if you are using the production let's encrypt server you should use 'ca-certificates.crt'
+  # otherwise in case of staging server, you should use 'tls.crt' also as 'chain.pem'
+  # cp "/tls/tls.key" ${CERT_DIR}/chain.pem
   cp "/etc/ssl/certs/ca-certificates.crt" ${CERT_DIR}/chain.pem
 
   # Set ownership to Mosquitto
