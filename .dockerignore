@@ -3,3 +3,4 @@
 Dockerfile
 password_file
 data
+mosquitto-local-dev.conf
