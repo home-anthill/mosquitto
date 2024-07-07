@@ -23,7 +23,7 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
     echo "Configuring authentication with SSL"
     echo "mosquitto username ${MOSQUITTO_USERNAME}"
-    echo "mosquitto password ${MOSQUITTO_USERNAME}"
+    echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
     mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     chown mosquitto:mosquitto /etc/mosquitto/password_file
@@ -42,7 +42,7 @@ else
   if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
     echo "Configuring authentication without SSL"
     echo "mosquitto username ${MOSQUITTO_USERNAME}"
-    echo "mosquitto password ${MOSQUITTO_USERNAME}"
+    echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
     mosquitto_passwd -b -c /etc/mosquitto/password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     chown mosquitto:mosquitto /etc/mosquitto/password_file
