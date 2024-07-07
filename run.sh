@@ -1,6 +1,8 @@
 #!/bin/sh
 # set -e
 
+mkdir -p /etc/mosquitto
+
 if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   echo "SSL enabled"
   CERT_DIR=/etc/mosquitto/certs
@@ -27,7 +29,8 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     ls -la ./
-    mv ./password_file /etc/mosquitto/password_file
+    cat ./password_file
+    cp ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
     # start mosquitto with user/password authentication
@@ -48,7 +51,8 @@ else
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     ls -la ./
-    mv ./password_file /etc/mosquitto/password_file
+    cat ./password_file
+    cp ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
     # start mosquitto with user/password authentication
