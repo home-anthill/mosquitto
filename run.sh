@@ -11,8 +11,7 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   echo "Copying SSL certs"
   cp "/tls/tls.crt" ${CERT_DIR}/cert.pem
   cp "/tls/tls.key" ${CERT_DIR}/privkey.pem
-  # because tls.crt contains also the CA cert file
-  cp "/tls/tls.crt" ${CERT_DIR}/chain.pem
+  cp "/etc/ssl/certs/ca-certificates.crt" ${CERT_DIR}/chain.pem
 
   # Set ownership to Mosquitto
   chown mosquitto: ${CERT_DIR}/cert.pem ${CERT_DIR}/chain.pem ${CERT_DIR}/privkey.pem
@@ -33,12 +32,8 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
     cp ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
-    # start mosquitto with user/password authentication
-    mosquitto -c /mosquitto/config/mosquitto-auth.conf
   else
     echo "Skipping authentication with SSL"
-    # start mosquitto without authentication
-    mosquitto -c /mosquitto/config/mosquitto.conf
   fi
 else
   echo "SSL NOT enabled"
@@ -54,13 +49,12 @@ else
     cp ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
-    # start mosquitto with user/password authentication
-    mosquitto -c /mosquitto/config/mosquitto-nossl-auth.conf
   else
     echo "Skipping authentication without SSL"
-    # start mosquitto without authentication
-    mosquitto -c /mosquitto/config/mosquitto-nossl.conf
   fi
 fi
+
+# start mosquitto without authentication
+mosquitto -c /mosquitto/config/mosquitto.conf
 
 sleep infinity
