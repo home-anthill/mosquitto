@@ -11,7 +11,8 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   echo "Copying SSL certs"
   cp "/tls/tls.crt" ${CERT_DIR}/cert.pem
   cp "/tls/tls.key" ${CERT_DIR}/privkey.pem
-  cp "/etc/ssl/certs/ca-certificates.crt" ${CERT_DIR}/chain.pem
+  # because tls.crt contains also the CA cert file
+  cp "/tls/tls.crt" ${CERT_DIR}/chain.pem
 
   # Set ownership to Mosquitto
   chown mosquitto: ${CERT_DIR}/cert.pem ${CERT_DIR}/chain.pem ${CERT_DIR}/privkey.pem
