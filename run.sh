@@ -29,7 +29,6 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     ls -la ./
-    cat ./password_file
     cp ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
@@ -51,7 +50,6 @@ else
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     ls -la ./
-    cat ./password_file
     cp ./password_file /etc/mosquitto/password_file
     chown mosquitto:mosquitto /etc/mosquitto/password_file
     chmod 0600 /etc/mosquitto/password_file
