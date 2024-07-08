@@ -12,10 +12,15 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   cp "/tls/tls.crt" ${CERT_DIR}/cert.pem
   cp "/tls/tls.key" ${CERT_DIR}/privkey.pem
 
-  # if you are using the production let's encrypt server you should use 'ca-certificates.crt'
-  # otherwise in case of staging server, you should use 'tls.crt' also as 'chain.pem'
-  # cp "/tls/tls.key" ${CERT_DIR}/chain.pem
-  cp "/etc/ssl/certs/ca-certificates.crt" ${CERT_DIR}/chain.pem
+  if [ "${LETSENCRYPT_SERVER_ENV}" == "prod" ]; then
+    echo "Using Let'sencrypt production server"
+    # if you are using the production let's encrypt server you should use 'ca-certificates.crt'
+    cp "/etc/ssl/certs/ca-certificates.crt" ${CERT_DIR}/chain.pem
+  else
+    echo "Using Let'sencrypt staging server"
+    # otherwise in case of staging server, you should use 'tls.crt' also as 'chain.pem'
+    cp "/tls/tls.key" ${CERT_DIR}/chain.pem
+  fi
 
   # Set ownership to Mosquitto
   chown mosquitto: ${CERT_DIR}/cert.pem ${CERT_DIR}/chain.pem ${CERT_DIR}/privkey.pem
