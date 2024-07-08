@@ -19,7 +19,7 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
   else
     echo "Using Let'sencrypt staging server"
     # otherwise in case of staging server, you should use 'tls.crt' also as 'chain.pem'
-    cp "/tls/tls.key" ${CERT_DIR}/chain.pem
+    cp "/tls/tls.crt" ${CERT_DIR}/chain.pem
   fi
 
   # Set ownership to Mosquitto
@@ -33,8 +33,6 @@ if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
 
   if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
     echo "Configuring authentication with SSL"
-    echo "mosquitto username ${MOSQUITTO_USERNAME}"
-    echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     ls -la ./
@@ -50,8 +48,6 @@ else
 
   if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
     echo "Configuring authentication without SSL"
-    echo "mosquitto username ${MOSQUITTO_USERNAME}"
-    echo "mosquitto password ${MOSQUITTO_PASSWORD}"
     # set user and password for mosquitto
     mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
     ls -la ./
