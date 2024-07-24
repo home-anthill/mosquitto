@@ -3,60 +3,18 @@ set -e
 
 mkdir -p /etc/mosquitto
 
-if [ ${MOSQUITTO_SSL_ENABLE+x} ]; then
-  echo "SSL enabled"
-  CERT_DIR=/etc/mosquitto/certs
-  mkdir -p ${CERT_DIR}
+ps -a
 
-  echo "Copying SSL certs"
-  cp "/tls/tls.crt" ${CERT_DIR}/cert.pem
-  cp "/tls/tls.key" ${CERT_DIR}/privkey.pem
-
-  if [ "${LETSENCRYPT_SERVER_ENV}" == "prod" ]; then
-    echo "Using Let'sencrypt production server"
-    # if you are using the production let's encrypt server you should use 'ca-certificates.crt'
-    cp "/etc/ssl/certs/ca-certificates.crt" ${CERT_DIR}/chain.pem
-  else
-    echo "Using Let'sencrypt staging server"
-    # otherwise in case of staging server, you should use 'tls.crt' also as 'chain.pem'
-    cp "/tls/tls.crt" ${CERT_DIR}/chain.pem
-  fi
-
-  # Set ownership to Mosquitto
-  chown mosquitto: ${CERT_DIR}/cert.pem ${CERT_DIR}/chain.pem ${CERT_DIR}/privkey.pem
-
-  # Ensure permissions are restrictive
-  chmod 0600 ${CERT_DIR}/cert.pem ${CERT_DIR}/chain.pem ${CERT_DIR}/privkey.pem
-
-  ls -la ${CERT_DIR}
-  ps -a
-
-  if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
-    echo "Configuring authentication with SSL"
-    # set user and password for mosquitto
-    mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
-    ls -la ./
-    cp ./password_file /etc/mosquitto/password_file
-    chown mosquitto:mosquitto /etc/mosquitto/password_file
-    chmod 0600 /etc/mosquitto/password_file
-  else
-    echo "Skipping authentication with SSL"
-  fi
+if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
+  echo "Configuring authentication with SSL"
+  # set user and password for mosquitto
+  mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+  ls -la ./
+  cp ./password_file /etc/mosquitto/password_file
+  chown mosquitto:mosquitto /etc/mosquitto/password_file
+  chmod 0600 /etc/mosquitto/password_file
 else
-  echo "SSL NOT enabled"
-  ps -a
-
-  if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
-    echo "Configuring authentication without SSL"
-    # set user and password for mosquitto
-    mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
-    ls -la ./
-    cp ./password_file /etc/mosquitto/password_file
-    chown mosquitto:mosquitto /etc/mosquitto/password_file
-    chmod 0600 /etc/mosquitto/password_file
-  else
-    echo "Skipping authentication without SSL"
-  fi
+  echo "Skipping authentication with SSL"
 fi
 
 # start mosquitto without authentication
