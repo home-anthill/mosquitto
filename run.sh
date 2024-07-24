@@ -2,7 +2,6 @@
 set -e
 
 mkdir -p /etc/mosquitto
-mkdir -p /etc/mosquitto/certs
 
 ps -a
 
@@ -18,10 +17,8 @@ else
   echo "Skipping authentication"
 fi
 
-ls -la /etc/mosquitto/certs
-
+# start mosquitto with 10s of delay
 sleep 10
-# start mosquitto
 mosquitto -c /mosquitto/config/mosquitto.conf
 
 sleep infinity
