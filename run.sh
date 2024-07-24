@@ -2,6 +2,7 @@
 set -e
 
 mkdir -p /etc/mosquitto
+mkdir -p /etc/mosquitto/certs
 
 ps -a
 
