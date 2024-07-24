@@ -6,7 +6,7 @@ mkdir -p /etc/mosquitto
 ps -a
 
 if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
-  echo "Configuring authentication with SSL"
+  echo "Configuring authentication"
   # set user and password for mosquitto
   mosquitto_passwd -b -c ./password_file ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
   ls -la ./
@@ -14,8 +14,10 @@ if [ ${MOSQUITTO_USERNAME+x} ] && [ ${MOSQUITTO_PASSWORD+x} ]; then
   chown mosquitto:mosquitto /etc/mosquitto/password_file
   chmod 0600 /etc/mosquitto/password_file
 else
-  echo "Skipping authentication with SSL"
+  echo "Skipping authentication"
 fi
+
+ls -la /etc/mosquitto/certs
 
 sleep 10
 # start mosquitto
