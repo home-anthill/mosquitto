@@ -17,7 +17,8 @@ else
   echo "Skipping authentication with SSL"
 fi
 
-# start mosquitto without authentication
+sleep 10
+# start mosquitto
 mosquitto -c /mosquitto/config/mosquitto.conf
 
 sleep infinity
