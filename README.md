@@ -21,7 +21,7 @@ GitHub releases [HERE](https://github.com/home-anthill/mosquitto/releases)
 
 Versions:
 
-- 08/07/2024 - 2.0.0
+- 25/07/2024 - 2.0.0
 - 19/05/2024 - 1.0.1
 - 19/05/2024 - 1.0.0
 - 11/01/2023 - 1.0.0-beta.1
