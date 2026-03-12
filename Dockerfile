@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM eclipse-mosquitto:2.1-openssl
+FROM eclipse-mosquitto:2.1-alpine
 
 RUN apk update \
     && apk upgrade \
