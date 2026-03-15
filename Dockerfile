@@ -1,11 +1,9 @@
 # syntax=docker/dockerfile:1
 
-FROM eclipse-mosquitto:2.1-alpine
+FROM dhi.io/eclipse-mosquitto:2
 
-RUN apk update \
-    && apk upgrade \
-    && apk add --no-cache \
-    openssl
+# you must have use openssl to establish a secure connection.
+# hardened image already have openssl installed.
 
 WORKDIR /ac
  
