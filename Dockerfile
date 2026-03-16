@@ -1,14 +1,18 @@
 # syntax=docker/dockerfile:1
 
-FROM eclipse-mosquitto:2.1-alpine
+# Stage 1: compile the entrypoint binary
+FROM golang:1.24-alpine AS builder
 
-RUN apk update \
-    && apk upgrade \
-    && apk add --no-cache \
-    openssl
+WORKDIR /build
 
-WORKDIR /ac
- 
-COPY run.sh run.sh
+COPY entrypoint.go .
 
-ENTRYPOINT ["sh", "run.sh"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o entrypoint entrypoint.go
+
+
+# Stage 2: hardened image (no shell, no package manager, non-root mosquitto user)
+FROM dhi.io/eclipse-mosquitto:2
+
+COPY --from=builder /build/entrypoint /entrypoint
+
+ENTRYPOINT ["/entrypoint"]
