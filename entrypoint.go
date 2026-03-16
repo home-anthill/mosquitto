@@ -14,7 +14,7 @@ func main() {
 
 	if username != "" && password != "" {
 		fmt.Println("Configuring authentication")
-		passwordFile := "/mosquitto/data/password_file"
+		passwordFile := "/mosquitto/passwd/password_file"
 		cmd := exec.Command("mosquitto_passwd", "-b", "-c", passwordFile, username, password)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
