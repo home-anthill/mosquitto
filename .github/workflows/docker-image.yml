@@ -26,7 +26,34 @@ env:
   IMAGE_NAME: ks89/${{ github.event.repository.name }}
 
 jobs:
-  build:
+  build-and-check:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.26
+      - name: Install Make
+        run: sudo apt-get install -y make
+      - name: Run tests
+        run: |
+          echo "Installing dependencies"
+          make deps
+          echo "Running vet"
+          make vet
+          echo "Running lint"
+          make lint
+          echo "Run security audit"
+          make check
+          echo "Running build"
+          make build
+
+  build-and-publish:
     name: Build and publish
     runs-on: ubuntu-latest
     timeout-minutes: 60
