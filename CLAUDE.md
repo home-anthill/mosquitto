@@ -1,0 +1,120 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Containerized MQTT broker (Eclipse Mosquitto) with a custom Go entrypoint that handles dynamic authentication setup via environment variables. Part of the home-anthill IoT ecosystem. Published to Docker Hub as `ks89/mosquitto`.
+
+The entrypoint (`entrypoint.go`) is a single-file Go program using only the standard library. It reads credentials from environment variables, validates them for security, creates a password file via `mosquitto_passwd`, and then execs into Mosquitto. The module is defined in `go.mod` (Go 1.26) but has no external dependencies.
+
+## Architecture
+
+**Multi-stage Docker build:**
+1. **Builder stage** (`golang:1.26-alpine`): Compiles `entrypoint.go` into a static binary.
+2. **Runtime stage** (`dhi.io/eclipse-mosquitto:2` — hardened image): Copies the binary and uses it as the container entrypoint.
+
+**Startup flow** (`entrypoint.go`):
+1. Reads `MOSQUITTO_USERNAME` and `MOSQUITTO_PASSWORD` env vars, then immediately clears them from the environment.
+2. Validates inputs: rejects usernames containing null bytes, path separators, colons, or whitespace; rejects passwords containing null bytes.
+3. If both are set, creates a password file at `/mosquitto/passwd/password_file` via `mosquitto_passwd` (password piped via stdin, not passed as CLI argument) and chmods it to 0600.
+4. `syscall.Exec`s into `mosquitto -c /mosquitto/config/mosquitto.conf`.
+
+**Mosquitto config** (`mosquitto-local-dev.conf`): Listens on port 1883, persistence enabled at `/mosquitto/data/`, anonymous connections disabled, password file at `/etc/mosquitto/password_file`.
+
+**Security highlights** (`entrypoint.go`):
+- Usernames are validated: null bytes, `/\:` separators, and whitespace are rejected.
+- Passwords are validated: null bytes are rejected.
+- Credentials are cleared from the process environment immediately after reading, before any other work.
+- The password is passed to `mosquitto_passwd` via stdin, not as a CLI argument, to avoid exposure in process listings.
+
+## Development Commands
+
+The `Makefile` provides these targets:
+
+```bash
+make deps    # Install linting/analysis tools (shadow, staticcheck, govulncheck)
+make lint    # Run staticcheck (replaces deprecated golint)
+make vet     # Run go vet and shadow analysis for unused variables
+make check   # Check for known vulnerabilities with govulncheck
+make build   # Default target; runs lint, vet, and go build (not explicitly shown but runs all)
+```
+
+All targets run the Go toolchain locally — no Docker needed for development iteration.
+
+## Testing & Verification
+
+### Local Docker testing
+
+Build and run the image locally:
+
+```bash
+# Build the image
+docker build -t ks89/mosquitto .
+
+# Prepare local data directories
+mkdir -p data log
+
+# Run with authentication
+docker run -it --name mosquitto \
+    -p 1883:1883 -p 9001:9001 \
+    --rm \
+    -v ./mosquitto-local-dev.conf:/mosquitto/config/mosquitto.conf:ro \
+    -v ./data:/mosquitto/data \
+    -v ./log:/mosquitto/log \
+    -e MOSQUITTO_USERNAME=mosquser \
+    -e MOSQUITTO_PASSWORD='Password1!' \
+    ks89/mosquitto
+```
+
+### Smoke test (requires `mosquitto` CLI tools)
+
+Install the CLI clients:
+```bash
+brew install mosquitto
+```
+
+Test authentication is working:
+```bash
+# This should succeed (exit code 0)
+mosquitto_pub -h localhost -p 1883 -u mosquser -P 'Password1!' -t "test/topic" -m "hello" && echo "OK"
+
+# This should fail with "not authorised"
+mosquitto_pub -h localhost -p 1883 -t "test/topic" -m "hello"
+```
+
+Full testing guide (subscribe/publish across terminals): `LOCAL_GUIDE_DOCKER.md`
+
+## CI/CD
+
+GitHub Actions workflow (`.github/workflows/docker-image.yml`) builds and pushes to Docker Hub on pushes to `master`, `develop`, `ft**` branches, and `v*.*.*` tags. Uses Docker Buildx with GitHub Actions cache.
+
+## Branch Conventions
+
+- `master`: main/release branch
+- `develop`: active development
+- `ft**`: feature branches
+
+## Local Kubernetes Deployment
+
+For Kubernetes deployment on a local kind cluster or Docker Desktop:
+
+- Docker Desktop Kubernetes and kind are separate clusters with independent kubeconfig contexts.
+- The kind cluster must be created explicitly; enabling Kubernetes in Docker Desktop does not create a kind cluster.
+- The project uses kind clusters named `kind-cluster` (kubeconfig context: `kind-kind-cluster`).
+
+Quick start:
+```bash
+# Build and save the image
+docker build -t ks89/mosquitto .
+docker save ks89/mosquitto -o mosquitto.tar
+
+# Create and load into kind
+kind create cluster --name kind-cluster --image kindest/node:v1.32.0
+kind load image-archive mosquitto.tar --name kind-cluster
+
+# Deploy using the manifest
+kubectl apply -f local-example-k8s.yaml
+```
+
+For the full guide including networking setup, secret management, and testing: `LOCAL_GUIDE_K8S.md`
