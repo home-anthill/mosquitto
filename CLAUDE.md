@@ -16,17 +16,18 @@ The entrypoint (`entrypoint.go`) is a single-file Go program using only the stan
 
 **Startup flow** (`entrypoint.go`):
 1. Reads `MOSQUITTO_USERNAME` and `MOSQUITTO_PASSWORD` env vars, then immediately clears them from the environment.
-2. Validates inputs: rejects usernames containing null bytes, path separators, colons, or whitespace; rejects passwords containing null bytes.
+2. Validates inputs: rejects usernames that start with `-`, contain path separators, colons, whitespace, or control characters; rejects passwords containing control characters.
 3. If both are set, creates a password file at `/mosquitto/passwd/password_file` via `mosquitto_passwd` (password piped via stdin, not passed as CLI argument) and chmods it to 0600.
 4. `syscall.Exec`s into `mosquitto -c /mosquitto/config/mosquitto.conf`.
 
 **Mosquitto config** (`mosquitto-local-dev.conf`): Listens on port 1883, persistence enabled at `/mosquitto/data/`, anonymous connections disabled, password file at `/etc/mosquitto/password_file`.
 
 **Security highlights** (`entrypoint.go`):
-- Usernames are validated: null bytes, `/\:` separators, and whitespace are rejected.
-- Passwords are validated: null bytes are rejected.
+- Usernames are validated: leading `-`, `/\:` separators, whitespace, and control characters are rejected.
+- Passwords are validated: control characters are rejected, including null bytes, tabs, carriage returns, and newlines.
 - Credentials are cleared from the process environment immediately after reading, before any other work.
 - The password is passed to `mosquitto_passwd` via stdin, not as a CLI argument, to avoid exposure in process listings.
+- Credential validation is covered by unit tests in `entrypoint_test.go`.
 
 ## Development Commands
 
@@ -87,7 +88,7 @@ Full testing guide (subscribe/publish across terminals): `LOCAL_GUIDE_DOCKER.md`
 
 ## CI/CD
 
-GitHub Actions workflow (`.github/workflows/docker-image.yml`) builds and pushes to Docker Hub on pushes to `master`, `develop`, `ft**` branches, and `v*.*.*` tags. Uses Docker Buildx with GitHub Actions cache.
+GitHub Actions workflow (`.github/workflows/docker-image.yml`) builds and pushes to Docker Hub on pushes to `master`, `develop`, `ft**` branches, and `v*.*.*` tags. Uses Docker Buildx with GitHub Actions cache. The publish job depends on the test/check job, so images are only published after lint, vet, vulnerability checks, and build verification pass.
 
 ## Branch Conventions
 

@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+	"unicode"
 )
 
 func main() {
@@ -18,11 +19,11 @@ func main() {
 	os.Unsetenv("MOSQUITTO_PASSWORD")
 
 	if username != "" && password != "" {
-		if strings.ContainsAny(username, "\x00/\\: \t\n") {
+		if !validUsername(username) {
 			log.Fatal("MOSQUITTO_USERNAME contains invalid characters")
 		}
-		if strings.Contains(password, "\x00") {
-			log.Fatal("MOSQUITTO_PASSWORD contains null bytes")
+		if !validPassword(password) {
+			log.Fatal("MOSQUITTO_PASSWORD contains invalid control characters")
 		}
 
 		log.Println("Configuring authentication")
@@ -58,4 +59,25 @@ func main() {
 	if err := syscall.Exec(mosquittoPath, args, os.Environ()); err != nil {
 		log.Fatalf("Failed to exec mosquitto: %v", err)
 	}
+}
+
+func validUsername(username string) bool {
+	if strings.HasPrefix(username, "-") || strings.ContainsAny(username, "/\\:") {
+		return false
+	}
+	for _, r := range username {
+		if unicode.IsControl(r) || unicode.IsSpace(r) {
+			return false
+		}
+	}
+	return true
+}
+
+func validPassword(password string) bool {
+	for _, r := range password {
+		if unicode.IsControl(r) {
+			return false
+		}
+	}
+	return true
 }
