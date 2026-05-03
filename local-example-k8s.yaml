@@ -19,6 +19,29 @@ data:
     log_type all
     listener 1883
     password_file /mosquitto/passwd/password_file
+    acl_file /mosquitto/acl/acl_file
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-acl
+  namespace: mosquitto
+data:
+  acl_file: |-
+    user device_pubsub
+    topic write sensors/+/+
+    topic write online/+/features/+
+    topic read devices/+/values
+
+    user producer_sub
+    topic read sensors/+/+
+
+    user online_receiver_sub
+    topic read online/+/features/+
+
+    user api_devices_pub
+    topic write devices/+/values
 
 ---
 apiVersion: v1
@@ -51,21 +74,45 @@ spec:
     spec:
       securityContext:
         fsGroup: 1883
+        runAsUser: 1883
+        runAsGroup: 1883
+        runAsNonRoot: true
+      initContainers:
+        - name: prepare-acl
+          image: alpine:3.20
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+              add: ["CHOWN"]
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              cp /mosquitto/acl-src/acl_file /mosquitto/acl/acl_file
+              chmod 0400 /mosquitto/acl/acl_file
+              chown 1883:1883 /mosquitto/acl/acl_file
+          volumeMounts:
+            - name: acl-src
+              mountPath: /mosquitto/acl-src
+              readOnly: true
+            - name: acl
+              mountPath: /mosquitto/acl
       containers:
         - name: mosquitto
-          image: ks89/mosquitto
+          image: ks89/mosquitto:local
           imagePullPolicy: Never  # use the locally loaded image
           env:
-            - name: MOSQUITTO_USERNAME
+            - name: MOSQUITTO_USERS
               valueFrom:
                 secretKeyRef:
                   name: mosquitto-auth
-                  key: username
-            - name: MOSQUITTO_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mosquitto-auth
-                  key: password
+                  key: users
           ports:
             - name: mqtt
               containerPort: 1883
@@ -89,6 +136,9 @@ spec:
               readOnly: true
             - name: passwd
               mountPath: /mosquitto/passwd
+            - name: acl
+              mountPath: /mosquitto/acl
+              readOnly: true
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -98,6 +148,12 @@ spec:
             name: mosquitto-config
         - name: passwd
           emptyDir: {}
+        - name: acl
+          emptyDir: {}
+        - name: acl-src
+          configMap:
+            name: mosquitto-acl
+            defaultMode: 0444
 
 ---
 kind: Service

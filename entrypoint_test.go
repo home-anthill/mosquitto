@@ -2,6 +2,19 @@ package main
 
 import "testing"
 
+func TestParseUsers(t *testing.T) {
+	users := parseUsers("device_pubsub:device-pass,producer_sub:producer-pass")
+	if len(users) != 2 {
+		t.Fatalf("len(parseUsers) = %d, want 2", len(users))
+	}
+	if users[0].username != "device_pubsub" || users[0].password != "device-pass" {
+		t.Fatalf("users[0] = %#v, want device_pubsub/device-pass", users[0])
+	}
+	if users[1].username != "producer_sub" || users[1].password != "producer-pass" {
+		t.Fatalf("users[1] = %#v, want producer_sub/producer-pass", users[1])
+	}
+}
+
 func TestValidUsername(t *testing.T) {
 	tests := []struct {
 		name     string

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-05-01
+
+### Security Fixes (`entrypoint.go`)
+
+- **Multiple MQTT users supported**: Added `MOSQUITTO_USERS` support using comma-separated `username:password` entries so deployments can generate one Mosquitto password file with role-specific users.
+- **Single-user mode retained**: Existing `MOSQUITTO_USERNAME` / `MOSQUITTO_PASSWORD` behavior remains supported for local and backward-compatible deployments, but it cannot be combined with `MOSQUITTO_USERS`.
+- **Container restart fixed**: The entrypoint now removes a previously generated password file before calling `mosquitto_passwd -c`, so Kubernetes container restarts with an existing `emptyDir` password file do not fail.
+- **Multiple-user parser tests added**: Added unit coverage for parsing multiple MQTT users.
+- **Local guides updated**: Docker and Kubernetes local guides now use `MOSQUITTO_USERS` plus ACL files that match the production role split.
+
 ## 2026-04-24
 
 ### Security Fixes (`entrypoint.go`)
