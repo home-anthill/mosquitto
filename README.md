@@ -21,7 +21,7 @@ GitHub releases [HERE](https://github.com/home-anthill/mosquitto/releases)
 
 Versions:
 
-- ??/??/2026 - 4.0.0
+- 28/05/2026 - 4.0.0
 - 16/03/2026 - 3.0.0
 - 12/03/2026 - 2.1.0
 - 21/08/2025 - 2.0.1
@@ -42,7 +42,7 @@ Versions:
 
 The MIT License (MIT)
 
-Copyright (c) 2021-2025 Stefano Cappa (Ks89)
+Copyright (c) 2021-2026 Stefano Cappa (Ks89)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
