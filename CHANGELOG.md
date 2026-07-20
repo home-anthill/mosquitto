@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.1
+
+### Chores
+
+- update deps
+
+
 ## 4.0.0
 
 ### Security Fixes
