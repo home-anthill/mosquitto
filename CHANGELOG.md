@@ -1,6 +1,11 @@
 # Changelog
 
-## 4.0.1
+## 5.0.0
+
+### Features
+
+- Renamed the presence subscriber MQTT example user from `online_receiver_sub` to `alarm_receiver_sub`; its `online/+/features/+` ACL is unchanged.
+- Allowed the shared device role to publish and `alarm_receiver_sub` to read `alarms/+/features/+/+`.
 
 ### Chores
 

@@ -19,7 +19,7 @@ kubectl create namespace mosquitto --dry-run=client -o yaml | kubectl apply -f -
 ```bash
 kubectl create secret generic mosquitto-auth \
   --namespace mosquitto \
-  --from-literal=users='device_pubsub:DevicePassword1!,producer_sub:ProducerPassword1!,online_receiver_sub:OnlineReceiverPassword1!,api_devices_pub:ApiDevicesPassword1!' \
+  --from-literal=users='device_pubsub:DevicePassword1!,producer_sub:ProducerPassword1!,alarm_receiver_sub:AlarmReceiverPassword1!,api_devices_pub:ApiDevicesPassword1!' \
   --dry-run=client -o yaml | kubectl apply -f -
 ```
 

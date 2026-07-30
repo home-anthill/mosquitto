@@ -15,7 +15,7 @@ docker run -it --name mosquitto \
     -v ./mosquitto-local-acl.conf:/mosquitto/acl/acl_file:ro \
     -v ./data:/mosquitto/data \
     -v ./log:/mosquitto/log \
-    -e MOSQUITTO_USERS='device_pubsub:DevicePassword1!,producer_sub:ProducerPassword1!,online_receiver_sub:OnlineReceiverPassword1!,api_devices_pub:ApiDevicesPassword1!' \
+    -e MOSQUITTO_USERS='device_pubsub:DevicePassword1!,producer_sub:ProducerPassword1!,alarm_receiver_sub:AlarmReceiverPassword1!,api_devices_pub:ApiDevicesPassword1!' \
     ks89/mosquitto:local
 
 If the logs warn that `/mosquitto/acl/acl_file` is world readable, run `chmod 0700 mosquitto-local-acl.conf` on the host and restart the container.
