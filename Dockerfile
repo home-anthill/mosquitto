@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Stage 1: compile the entrypoint binary
-FROM golang:1.26.5-alpine AS builder
+FROM golang:1.27-alpine AS builder
 
 WORKDIR /build
 
